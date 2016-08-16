@@ -2,7 +2,7 @@
   "name": "thingshub",
   "version": "1.0.0",
   "description": "ThingsHub is een cli interface gebaseerde applicatie, gekoppeld aan hardware. Hiervoor zullen 4 nodes ontwikkeld worden voor dummydata: 2 over usb (seriele monitor) en 2 over mqtt.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
