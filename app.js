@@ -1,24 +1,24 @@
 var mqtt    = require('mqtt');
-var client  = mqtt.connect('mqtt://localhost:1883');
+var client  = mqtt.connect('mqtt://broker.hivemq.com:1883');
 var SerialPort = require("serialport");
 var port = new SerialPort("/dev/cu.usbmodem1421", {
-  baudRate: 9600
+  baudRate: 9600,
+  parser: SerialPort.parsers.readline(",")
 });
 
- // subscribe
-client.on('connect', function () {
-  client.subscribe('presence');
-  port.on('open', function(){
-    console.log('Serial Port Opend');
-    port.on('data', function(data){
-        client.publish('presence', data);
+//Open serial port and immediately publish datastream to topic
+port.on('open', function(){
+  console.log('Serial Port Opened');
+    client.on('connect', function () {
+      port.on('data', function(data){
+      client.subscribe('presence');
+      client.publish('presence', data);
     });
   });
 });
 
- // verify subscription
+//Subscribe to same topic and log datastream in string format
 client.on('message', function (topic, message) {
-  // message is Buffer
   console.log(message.toString());
-  client.end();
+  //Client.end removed so connection isnt closed
 });
