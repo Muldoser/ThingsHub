@@ -1,0 +1,32 @@
+{
+  "name": "thingshub",
+  "version": "1.0.0",
+  "description": "ThingsHub is een cli interface gebaseerde applicatie, gekoppeld aan hardware. Hiervoor zullen 4 nodes ontwikkeld worden voor dummydata: 2 over usb (seriele monitor) en 2 over mqtt.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Muldoser/ThingsHub.git"
+  },
+  "keywords": [
+    "node.js",
+    "Arduino",
+    "MQTT",
+    "CLI",
+    "IoT",
+    "AP"
+  ],
+  "author": "Michiel Mulder, Kevin Van de Mieroop",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Muldoser/ThingsHub/issues"
+  },
+  "homepage": "https://github.com/Muldoser/ThingsHub#readme",
+  "dependencies": {
+    "mqtt": "^1.14.0",
+    "serialport": "^4.0.1"
+  }
+}
