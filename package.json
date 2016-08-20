@@ -29,7 +29,9 @@
   },
   "homepage": "https://github.com/Muldoser/ThingsHub#readme",
   "dependencies": {
+    "commander": "^2.9.0",
     "mqtt": "^1.14.0",
-    "serialport": "^4.0.1"
+    "serialport": "^4.0.1",
+    "shelljs": "^0.7.3"
   }
 }
