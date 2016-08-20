@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/Muldoser/ThingsHub.git"
   },
+  "bin": {
+    "thingshub": "thingshub.js"
+  },
   "keywords": [
     "node.js",
     "Arduino",
