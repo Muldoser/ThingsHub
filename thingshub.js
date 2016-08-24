@@ -23,12 +23,28 @@ program
   .option('-d, --dissect <DISSECTOR>', 'Specify a dissector')
   .option('-s, --silent', 'Turn silent mode on')
   .action(function(INTERFACE, options) {
+    var port = new SerialPort(INTERFACE, {
+      baudRate: 9600,
+      parser: SerialPort.parsers.readline(",")
+    });
+
     var silence = false;
+
+
     console.log('Saving configuration...');
     if (options.silent)
       {
         silence = true;
       }
+    port.on('open', function(){
+      console.log("Receiving data from serial interface: " + INTERFACE);
+      console.log("Hit 'CTRL+C' to quit...");
+        port.on('data', function(data){
+          if(!silence){
+            console.log(data);
+          }
+        });
+    });
     appendObject({name: INTERFACE, dissector: options.dissect, silent: silence});
   });
 
