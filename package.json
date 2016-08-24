@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/Muldoser/ThingsHub#readme",
   "dependencies": {
+<<<<<<< HEAD
     "commander": "^2.9.0",
     "mqtt": "^1.14.0",
     "serialport": "^4.0.1",
@@ -36,5 +37,11 @@
   },
   "devDependencies": {
     "jasmine": "^2.4.1"
+=======
+    "json-stringify-safe": "^5.0.1",
+    "mqtt": "^1.14.0",
+    "serialport": "^4.0.1",
+    "shelljs": "^0.7.3"
+>>>>>>> feature/commander
   }
 }
