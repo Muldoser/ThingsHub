@@ -32,13 +32,10 @@
     "commander": "^2.9.0",
     "mqtt": "^1.14.0",
     "serialport": "^4.0.1",
-    "shelljs": "^0.7.3"
+    "shelljs": "^0.7.3",
+    "json-stringify-safe": "^5.0.1"
   },
   "devDependencies": {
-    "jasmine": "^2.4.1",
-    "json-stringify-safe": "^5.0.1",
-    "mqtt": "^1.14.0",
-    "serialport": "^4.0.1",
-    "shelljs": "^0.7.3"
+    "jasmine": "^2.4.1"
   }
 }
