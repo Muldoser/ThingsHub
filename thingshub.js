@@ -1,9 +1,12 @@
 #! /usr/bin/env node
 var program = require('commander');
-var shell = require("shelljs");
+var shell = require('shelljs');
 var fs = require('fs');
 var stringify = require('json-stringify-safe');
-var SerialPort = require("serialport");
+var SerialPort = require('serialport');
+var mqtt = require('mqtt');
+var client = mqtt.connect('mqtt://broker.hivemq.com:1883');
+
 
 function appendObject(obj){
   var configFile = fs.readFileSync('./data.json');
@@ -39,8 +42,9 @@ program
 // Then compare to specified port from command (INTERFACE)
 // If specified port is available, open serial port and start receiving data
     SerialPort.list(function(err, ports){
+      
+      // Loop through various ports
       ports.forEach(function(port){
-        console.log(port.comName);
         if (port.comName == INTERFACE){
           PORT = new SerialPort(INTERFACE, {
             baudRate: 9600,
@@ -58,7 +62,12 @@ program
         }
 
         // TODO open MQTT if no serial ports available
-
+       else {
+          client.subscribe(INTERFACE);
+          client.on('message', function(topic, message) {
+              console.log('MQTT: ' + message.toString());
+          });
+        }
       });
     });
 
@@ -79,10 +88,12 @@ if (program.listAvailableInterfaces) {
       return null;
     }
   	if(ports.length > 0){
-      console.log('All ports: ' + JSON.stringify(ports));
+      // console.log('All ports: ' + JSON.stringify(ports));
       ports.forEach(function(port){
-        console.log(port.comName);
-        console.log(port.manufacturer);
+        console.log("\nSerial port information: ")
+        console.log("\t * Port name: \t\t" + port.comName);
+        console.log("\t * Port manufacturer: \t" + port.manufacturer);
+        console.log("\n")
       });
     }
     else{
