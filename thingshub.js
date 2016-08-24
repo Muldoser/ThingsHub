@@ -27,7 +27,7 @@ program
     var comName = [];
     var PORT;
 
-// if flag -s is used
+// If flag -s is used
     console.log('Saving configuration...');
     if (options.silent)
     {
