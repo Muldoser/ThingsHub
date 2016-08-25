@@ -98,6 +98,36 @@ program
 });
 
 program
+  .command('watch <INTERFACE>')
+  .action(function(INTERFACE) {
+        SerialPort.list(function(err, ports){
+      
+      // Loop through various ports
+      ports.forEach(function(port){
+        if (port.comName == INTERFACE){
+          PORT = new SerialPort(INTERFACE, {
+            baudRate: 9600,
+            parser: SerialPort.parsers.readline(",")
+          });
+          PORT.on('open', function(){
+            console.log("Receiving data from serial interface: " + INTERFACE);
+            console.log("Hit 'CTRL+C' to quit...");
+            PORT.on('data', function(data){
+                console.log(data);
+            });
+          });
+        }
+        // TODO open MQTT if no serial ports available
+       else {
+          client.subscribe(INTERFACE);
+          client.on('message', function(topic, message) {
+              console.log('MQTT: ' + message.toString());
+          });
+        }
+      });
+    });
+});
+program
   .command('attach <INTERFACE>')
   .option('-d, --dissect <DISSECTOR>', 'Specify a dissector')
   .option('-s, --silent', 'Turn silent mode on')
