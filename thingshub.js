@@ -15,6 +15,7 @@ var client = mqtt.connect('mqtt://broker.hivemq.com:1883');
 //   data: {dissecteerd/parsed}
 // }
 
+//append new interfaces to things.json
 function appendObject(obj){
   var configFile = fs.readFileSync('./things.json');
   var config = JSON.parse(configFile);
@@ -23,6 +24,18 @@ function appendObject(obj){
   fs.writeFileSync('./things.json', configJSON);
 }
 
+function getAttachedInterfaces(){
+  var configFile = fs.readFileSync('./things.json');
+  var allInterfaces = JSON.parse(configFile);
+  var interfaceNames = [];
+
+  console.log("Starting for interfaces: ");
+  allInterfaces.forEach(function(interface){
+    interfaceNames.push(interface.name);
+    console.log("\t *" +interface.name);
+  });
+}
+//append new datapoints to data.json
 function appendDatapoint(obj){
   var configFile = fs.readFileSync('./data.json');
   var config = JSON.parse(configFile);
@@ -37,12 +50,19 @@ program
   .option('-L, --list-available-interfaces', 'List all the available interfaces');
 
 program
+  .command('start')
+  .action(function() {
+    var interfaceNames
+    getAttachedInterfaces();
+});
+
+program
   .command('attach <INTERFACE>')
   .option('-d, --dissect <DISSECTOR>', 'Specify a dissector')
   .option('-s, --silent', 'Turn silent mode on')
   .action(function(INTERFACE, options) {
     var silence = false;
-    var comName = [];
+    //var comName = [];
     var PORT;
 
 // If flag -s is used
