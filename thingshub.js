@@ -34,6 +34,7 @@ function getAttachedInterfaces(){
     interfaceNames.push(interface.name);
     console.log("\t *" +interface.name);
   });
+  return allInterfaces;
 }
 //append new datapoints to data.json
 function appendDatapoint(obj){
@@ -52,8 +53,48 @@ program
 program
   .command('start')
   .action(function() {
-    var interfaceNames
-    getAttachedInterfaces();
+    var allInterfaces = getAttachedInterfaces();
+    allInterfaces.forEach(function(i){
+      var silence = i.silent;
+
+          SerialPort.list(function(err, ports){
+      
+      // Loop through various ports
+      ports.forEach(function(port){
+        if (port.comName == i.name){
+          PORT = new SerialPort(i.name, {
+            baudRate: 9600,
+            parser: SerialPort.parsers.readline(",")
+          });
+          PORT.on('open', function(){
+            console.log("Receiving data from serial interface: " + i.name);
+            console.log("Hit 'CTRL+C' to quit...");
+            PORT.on('data', function(data){
+              if(!silence){
+                console.log(i.name + ": " + data);
+              }
+              else if (silence)
+                appendDatapoint({interface: i.name, data: data});
+            });
+          });
+        }
+
+        // TODO open MQTT if no serial ports available
+       else {
+
+          client.subscribe(i.name);
+          client.on('message', function(topic, message) {
+            if(!silence){
+              console.log('MQTT ' +  i.name + ": " + message.toString());
+            }
+            else if (silence){
+              appendDatapoint({interface: i.name, data: message.toString()});
+            }
+          });
+        }
+      });
+    });
+    });
 });
 
 program
