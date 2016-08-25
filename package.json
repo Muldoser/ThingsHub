@@ -2,13 +2,17 @@
   "name": "thingshub",
   "version": "1.0.0",
   "description": "ThingsHub is een cli interface gebaseerde applicatie, gekoppeld aan hardware. Hiervoor zullen 4 nodes ontwikkeld worden voor dummydata: 2 over usb (seriele monitor) en 2 over mqtt.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "test": "jasmine"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Muldoser/ThingsHub.git"
+  },
+  "bin": {
+    "thingshub": "thingshub.js"
   },
   "keywords": [
     "node.js",
@@ -23,5 +27,15 @@
   "bugs": {
     "url": "https://github.com/Muldoser/ThingsHub/issues"
   },
-  "homepage": "https://github.com/Muldoser/ThingsHub#readme"
+  "homepage": "https://github.com/Muldoser/ThingsHub#readme",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "mqtt": "^1.14.0",
+    "serialport": "^4.0.1",
+    "shelljs": "^0.7.3",
+    "json-stringify-safe": "^5.0.1"
+  },
+  "devDependencies": {
+    "jasmine": "^2.4.1"
+  }
 }
