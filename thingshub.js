@@ -15,6 +15,7 @@ var client = mqtt.connect('mqtt://broker.hivemq.com:1883');
 //   data: {dissecteerd/parsed}
 // }
 
+//append new interfaces to things.json
 function appendObject(obj){
   var configFile = fs.readFileSync('./things.json');
   var config = JSON.parse(configFile);
@@ -23,6 +24,19 @@ function appendObject(obj){
   fs.writeFileSync('./things.json', configJSON);
 }
 
+function getAttachedInterfaces(){
+  var configFile = fs.readFileSync('./things.json');
+  var allInterfaces = JSON.parse(configFile);
+  var interfaceNames = [];
+
+  console.log("Starting for interfaces: ");
+  allInterfaces.forEach(function(interface){
+    interfaceNames.push(interface.name);
+    console.log("\t *" +interface.name);
+  });
+  return allInterfaces;
+}
+//append new datapoints to data.json
 function appendDatapoint(obj){
   var configFile = fs.readFileSync('./data.json');
   var config = JSON.parse(configFile);
@@ -37,12 +51,59 @@ program
   .option('-L, --list-available-interfaces', 'List all the available interfaces');
 
 program
+  .command('start')
+  .action(function() {
+    var allInterfaces = getAttachedInterfaces();
+    allInterfaces.forEach(function(i){
+      var silence = i.silent;
+
+          SerialPort.list(function(err, ports){
+      
+      // Loop through various ports
+      ports.forEach(function(port){
+        if (port.comName == i.name){
+          PORT = new SerialPort(i.name, {
+            baudRate: 9600,
+            parser: SerialPort.parsers.readline(",")
+          });
+          PORT.on('open', function(){
+            console.log("Receiving data from serial interface: " + i.name);
+            console.log("Hit 'CTRL+C' to quit...");
+            PORT.on('data', function(data){
+              if(!silence){
+                console.log(i.name + ": " + data);
+              }
+              else if (silence)
+                appendDatapoint({interface: i.name, data: data});
+            });
+          });
+        }
+
+        // TODO open MQTT if no serial ports available
+       else {
+
+          client.subscribe(i.name);
+          client.on('message', function(topic, message) {
+            if(!silence){
+              console.log('MQTT ' +  i.name + ": " + message.toString());
+            }
+            else if (silence){
+              appendDatapoint({interface: i.name, data: message.toString()});
+            }
+          });
+        }
+      });
+    });
+    });
+});
+
+program
   .command('attach <INTERFACE>')
   .option('-d, --dissect <DISSECTOR>', 'Specify a dissector')
   .option('-s, --silent', 'Turn silent mode on')
   .action(function(INTERFACE, options) {
     var silence = false;
-    var comName = [];
+    //var comName = [];
     var PORT;
 
 // If flag -s is used
