@@ -7,8 +7,23 @@ var SerialPort = require('serialport');
 var mqtt = require('mqtt');
 var client = mqtt.connect('mqtt://broker.hivemq.com:1883');
 
+// {
+//   opties:{}
+//   timestamp:
+//   data: "raw"
+//     of
+//   data: {dissecteerd/parsed}
+// }
 
 function appendObject(obj){
+  var configFile = fs.readFileSync('./things.json');
+  var config = JSON.parse(configFile);
+  config.push(obj);
+  var configJSON = stringify(config);
+  fs.writeFileSync('./things.json', configJSON);
+}
+
+function appendDatapoint(obj){
   var configFile = fs.readFileSync('./data.json');
   var config = JSON.parse(configFile);
   config.push(obj);
@@ -57,15 +72,23 @@ program
               if(!silence){
                 console.log(data);
               }
+              else if (silence)
+                appendDatapoint({interface: INTERFACE, data: data});
             });
           });
         }
 
         // TODO open MQTT if no serial ports available
        else {
+
           client.subscribe(INTERFACE);
           client.on('message', function(topic, message) {
+            if(!silence){
               console.log('MQTT: ' + message.toString());
+            }
+            else if (silence){
+              appendDatapoint({interface: INTERFACE, data: message.toString()});
+            }
           });
         }
       });
